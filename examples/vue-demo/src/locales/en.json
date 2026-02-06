@@ -1,0 +1,5 @@
+{
+  "vue.title": "Welcome to Interceptor",
+  "vue.subtitle": "Vue i18n demo",
+  "vue.legacy": "Legacy message from Vue i18n"
+}

@@ -1,0 +1,78 @@
+{
+  "name": "interceptor",
+  "version": "0.1.0",
+  "description": "On-demand translation compiler for i18n message files",
+  "author": "Wrkspace Co.",
+  "homepage": "https://github.com/wrkspace-co/interceptor",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wrkspace-co/interceptor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wrkspace-co/interceptor/issues"
+  },
+  "type": "module",
+  "bin": {
+    "interceptor": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./cli": "./dist/cli.js",
+    "./vite": {
+      "types": "./dist/plugins/vite.d.ts",
+      "import": "./dist/plugins/vite.js",
+      "require": "./dist/plugins/vite.cjs"
+    },
+    "./webpack": {
+      "types": "./dist/plugins/webpack.d.ts",
+      "import": "./dist/plugins/webpack.js",
+      "require": "./dist/plugins/webpack.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/cli.js",
+    "test": "vitest run",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.24.8",
+    "@babel/traverse": "^7.24.8",
+    "@babel/types": "^7.24.7",
+    "cac": "^6.7.14",
+    "chokidar": "^3.6.0",
+    "dotenv": "^16.4.5",
+    "fast-glob": "^3.3.2",
+    "jiti": "^1.21.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.4.1",
+    "@commitlint/config-conventional": "^20.4.1",
+    "@types/babel__traverse": "^7.20.6",
+    "@types/node": "^22.10.5",
+    "husky": "^9.1.7",
+    "tsup": "^8.1.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.0",
+    "vitepress": "^1.5.0",
+    "vitest": "^3.0.7",
+    "webpack": "^5.95.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
