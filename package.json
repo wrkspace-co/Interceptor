@@ -1,6 +1,6 @@
 {
   "name": "@wrkspace-co/interceptor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "On-demand translation compiler for i18n message files",
   "author": "Wrkspace Co.",
   "homepage": "https://github.com/wrkspace-co/interceptor",
