@@ -14,7 +14,7 @@ Interceptor is an on-demand translation compiler that scans your code for transl
 
 ## Install
 ```bash
-pnpm add -D interceptor
+pnpm add -D @wrkspace-co/interceptor
 ```
 
 ## Environment
@@ -41,7 +41,7 @@ pnpm interceptor
 
 ## Example config
 ```ts
-import type { InterceptorConfig } from "interceptor";
+import type { InterceptorConfig } from "@wrkspace-co/interceptor";
 
 const config: InterceptorConfig = {
   locales: ["en", "fr"],
@@ -103,7 +103,7 @@ interceptor --cwd path/to/project
 Interceptor’s Vite plugin runs the compiler at build time and (by default) in dev watch mode.
 ```ts
 import { defineConfig } from "vite";
-import { interceptorVitePlugin } from "interceptor/vite";
+import { interceptorVitePlugin } from "@wrkspace-co/interceptor/vite";
 
 export default defineConfig({
   plugins: [interceptorVitePlugin({ configPath: "interceptor.config.ts" })]
@@ -113,7 +113,7 @@ export default defineConfig({
 ## Webpack
 Interceptor’s Webpack plugin runs the compiler before build and in watch mode when Webpack runs with `watch`.
 ```js
-const { InterceptorWebpackPlugin } = require("interceptor/webpack");
+const { InterceptorWebpackPlugin } = require("@wrkspace-co/interceptor/webpack");
 
 module.exports = {
   plugins: [new InterceptorWebpackPlugin({ configPath: "interceptor.config.ts" })]

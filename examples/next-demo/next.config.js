@@ -1,4 +1,4 @@
-const { InterceptorWebpackPlugin } = require("interceptor/webpack");
+const { InterceptorWebpackPlugin } = require("@wrkspace-co/interceptor/webpack");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

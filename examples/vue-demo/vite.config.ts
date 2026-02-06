@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import { interceptorVitePlugin } from "interceptor/vite";
+import { interceptorVitePlugin } from "@wrkspace-co/interceptor/vite";
 
 export default defineConfig({
   plugins: [

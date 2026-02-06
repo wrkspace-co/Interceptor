@@ -1,5 +1,5 @@
 {
-  "name": "interceptor",
+  "name": "@wrkspace-co/interceptor",
   "version": "0.1.0",
   "description": "On-demand translation compiler for i18n message files",
   "author": "Wrkspace Co.",
@@ -32,6 +32,9 @@
       "import": "./dist/plugins/webpack.js",
       "require": "./dist/plugins/webpack.cjs"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "dist",

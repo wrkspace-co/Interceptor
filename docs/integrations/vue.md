@@ -4,14 +4,14 @@ If your Vue app uses Vite (Vue 3 default), integrate Interceptor using the Vite 
 
 ## Install
 ```bash
-pnpm add -D interceptor
+pnpm add -D @wrkspace-co/interceptor
 ```
 
 ## Configure
 ```ts
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import { interceptorVitePlugin } from "interceptor/vite";
+import { interceptorVitePlugin } from "@wrkspace-co/interceptor/vite";
 
 export default defineConfig({
   plugins: [

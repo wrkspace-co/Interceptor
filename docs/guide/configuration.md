@@ -4,7 +4,7 @@ Interceptor loads `interceptor.config.ts/js/cjs/mjs/json` from the current direc
 
 ## Core options
 ```ts
-import type { InterceptorConfig } from "interceptor";
+import type { InterceptorConfig } from "@wrkspace-co/interceptor";
 
 const config: InterceptorConfig = {
   rootDir: ".",

@@ -1,4 +1,4 @@
-import type { InterceptorConfig } from "interceptor";
+import type { InterceptorConfig } from "@wrkspace-co/interceptor";
 
 const config: InterceptorConfig = {
   locales: ["en", "es"],

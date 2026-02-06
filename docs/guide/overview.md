@@ -4,7 +4,7 @@ Interceptor is a translation compiler that keeps your i18n message files up to d
 
 ## Installation
 ```bash
-pnpm add -D interceptor
+pnpm add -D @wrkspace-co/interceptor
 ```
 
 ## Quick start
@@ -14,7 +14,7 @@ pnpm add -D interceptor
 
 Example config:
 ```ts
-import type { InterceptorConfig } from "interceptor";
+import type { InterceptorConfig } from "@wrkspace-co/interceptor";
 
 const config: InterceptorConfig = {
   locales: ["en", "es"],

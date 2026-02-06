@@ -4,14 +4,14 @@ Interceptor integrates with Vite via a plugin that runs the compiler at build ti
 
 ## Install
 ```bash
-pnpm add -D interceptor
+pnpm add -D @wrkspace-co/interceptor
 ```
 
 ## Configure
 ```ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { interceptorVitePlugin } from "interceptor/vite";
+import { interceptorVitePlugin } from "@wrkspace-co/interceptor/vite";
 
 export default defineConfig({
   plugins: [

@@ -4,12 +4,12 @@ Interceptor integrates with Webpack via a plugin that runs the compiler before a
 
 ## Install
 ```bash
-pnpm add -D interceptor
+pnpm add -D @wrkspace-co/interceptor
 ```
 
 ## Configure
 ```js
-const { InterceptorWebpackPlugin } = require("interceptor/webpack");
+const { InterceptorWebpackPlugin } = require("@wrkspace-co/interceptor/webpack");
 
 module.exports = {
   plugins: [

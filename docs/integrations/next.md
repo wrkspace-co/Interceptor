@@ -4,12 +4,12 @@ Next.js uses Webpack under the hood, so you can integrate Interceptor with the W
 
 ## Install
 ```bash
-pnpm add -D interceptor
+pnpm add -D @wrkspace-co/interceptor
 ```
 
 ## Configure
 ```js
-const { InterceptorWebpackPlugin } = require("interceptor/webpack");
+const { InterceptorWebpackPlugin } = require("@wrkspace-co/interceptor/webpack");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

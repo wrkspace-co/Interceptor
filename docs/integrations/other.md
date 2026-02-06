@@ -12,7 +12,7 @@ Use the Vite plugin:
 Example:
 ```ts
 import { defineConfig } from "vite";
-import { interceptorVitePlugin } from "interceptor/vite";
+import { interceptorVitePlugin } from "@wrkspace-co/interceptor/vite";
 
 export default defineConfig({
   plugins: [interceptorVitePlugin({ configPath: "interceptor.config.ts" })]
@@ -27,7 +27,7 @@ Use the Webpack plugin:
 
 Example:
 ```js
-const { InterceptorWebpackPlugin } = require("interceptor/webpack");
+const { InterceptorWebpackPlugin } = require("@wrkspace-co/interceptor/webpack");
 
 module.exports = {
   plugins: [new InterceptorWebpackPlugin({ configPath: "interceptor.config.ts" })]
