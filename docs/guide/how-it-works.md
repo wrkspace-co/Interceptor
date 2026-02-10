@@ -23,3 +23,6 @@ Only missing keys are sent to the LLM provider. If the default locale file alrea
 
 ## 4. Write
 The compiler writes the new keys into your locale files while preserving existing entries. For the default locale, the source string is used directly.
+
+## Optional: Cleanup
+If `cleanup.removeUnused` is enabled, Interceptor removes keys that are no longer referenced by your source code.

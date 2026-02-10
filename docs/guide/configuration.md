@@ -51,6 +51,9 @@ const config: InterceptorConfig = {
   },
   watcher: {
     debounceMs: 200
+  },
+  cleanup: {
+    removeUnused: false
   }
 };
 
@@ -88,6 +91,14 @@ Or use a resolver for complete control:
 ```ts
 i18n: {
   resolveMessagesFile: (locale) => `src/i18n/${locale}/messages.json`
+}
+```
+
+## Cleanup unused keys
+Enable cleanup to remove unused keys from locale files:
+```ts
+cleanup: {
+  removeUnused: true
 }
 ```
 
