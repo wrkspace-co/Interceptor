@@ -25,9 +25,39 @@ OpenAI:
 OPENAI_API_KEY=sk-your-real-key
 ```
 
+OpenAI-compatible:
+```bash
+OPENAI_COMPAT_API_KEY=your-provider-key
+```
+
 Google AI (Gemini):
 ```bash
 GEMINI_API_KEY=your-google-ai-key
+```
+
+Anthropic (Claude):
+```bash
+ANTHROPIC_API_KEY=your-anthropic-key
+```
+
+Mistral:
+```bash
+MISTRAL_API_KEY=your-mistral-key
+```
+
+Cohere:
+```bash
+COHERE_API_KEY=your-cohere-key
+```
+
+Groq:
+```bash
+GROQ_API_KEY=your-groq-key
+```
+
+DeepSeek:
+```bash
+DEEPSEEK_API_KEY=your-deepseek-key
 ```
 
 If you use a different environment variable name, set `llm.apiKeyEnv` in the config and put that key name in `.env`.
@@ -67,6 +97,9 @@ const config: InterceptorConfig = {
   batch: {
     size: 20,
     delayMs: 0
+  },
+  cleanup: {
+    removeUnused: false
   }
 };
 
@@ -77,18 +110,35 @@ export default config;
 Interceptor loads (in order) `interceptor.config.ts/js/cjs/mjs/json` from the current directory or any parent directory.
 
 ## LLM providers
-Supported providers today:
+Supported providers:
 - `openai`
+- `openai-compatible`
 - `google` (Gemini)
+- `anthropic` (Claude)
+- `mistral`
+- `cohere`
+- `groq`
+- `deepseek`
 
-Example for Google AI:
+Example for Anthropic:
 ```ts
 llm: {
-  provider: "google",
-  model: "gemini-1.5-flash",
-  apiKeyEnv: "GEMINI_API_KEY"
+  provider: "anthropic",
+  model: "claude-3-5-sonnet-20240620",
+  apiKeyEnv: "ANTHROPIC_API_KEY"
 }
 ```
+
+Example for OpenAI-compatible providers:
+```ts
+llm: {
+  provider: "openai-compatible",
+  model: "your-model-name",
+  apiKeyEnv: "OPENAI_COMPAT_API_KEY",
+  baseUrl: "https://your-provider.com/v1"
+}
+```
+`llm.baseUrl` is required for openai-compatible providers.
 
 ## CLI
 ```bash
@@ -140,6 +190,7 @@ module.exports = {
 - Interceptor writes flat JSON objects. Nested or namespaced formats are not supported in v0.1.
 - For custom file layouts, set `i18n.messagesPath` or `i18n.resolveMessagesFile`.
 - For `.vue` files, only `<script>` blocks are parsed (template extraction is not implemented yet).
+- To remove stale keys, enable `cleanup.removeUnused` in the config (disabled by default).
 
 ## Roadmap ideas
 - Pluralization-aware translation

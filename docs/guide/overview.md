@@ -58,7 +58,7 @@ Google AI (Gemini):
 GEMINI_API_KEY=your-google-ai-key
 ```
 
-If you use a different variable name, set `llm.apiKeyEnv` in the config.
+If you use a different variable name, set `llm.apiKeyEnv` in the config. See the LLM Providers page for other keys.
 
 ## Supported frameworks
 - Vite-based stacks (Vue, SvelteKit, SolidStart, Astro, Nuxt 3)
@@ -68,3 +68,13 @@ If you use a different variable name, set `llm.apiKeyEnv` in the config.
 - react-intl (`formatMessage`, `FormattedMessage`, `defineMessages`)
 - i18next (`t`, `i18n.t`, `Trans`)
 - vue-i18n (`t`, `$t` in script blocks)
+
+## Supported LLMs
+- OpenAI
+- OpenAI-compatible
+- Google (Gemini)
+- Anthropic (Claude)
+- Mistral
+- Cohere
+- Groq
+- DeepSeek

@@ -14,6 +14,8 @@ export default defineConfig({
         { text: "Overview", link: "/guide/overview" },
         { text: "How It Works", link: "/guide/how-it-works" },
         { text: "Configuration", link: "/guide/configuration" },
+        { text: "LLM Providers", link: "/guide/llm-providers" },
+        { text: "Changelog", link: "/guide/changelog" },
         { text: "CLI", link: "/guide/cli" }
       ],
       "/integrations/": [

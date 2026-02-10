@@ -69,6 +69,10 @@ const DEFAULT_WATCHER: Required<WatcherConfig> = {
   debounceMs: 200
 };
 
+const DEFAULT_CLEANUP = {
+  removeUnused: false
+};
+
 export async function loadConfig(
   explicitPath?: string,
   cwd: string = process.cwd()
@@ -158,12 +162,20 @@ export function normalizeConfig(
   };
 
   const llmProvider = config.llm.provider ?? "openai";
+  const defaultApiKeyEnv: Record<string, string> = {
+    openai: "OPENAI_API_KEY",
+    "openai-compatible": "OPENAI_COMPAT_API_KEY",
+    google: "GEMINI_API_KEY",
+    anthropic: "ANTHROPIC_API_KEY",
+    mistral: "MISTRAL_API_KEY",
+    cohere: "COHERE_API_KEY",
+    groq: "GROQ_API_KEY",
+    deepseek: "DEEPSEEK_API_KEY"
+  };
   const llm = {
     provider: llmProvider,
     model: config.llm.model,
-    apiKeyEnv:
-      config.llm.apiKeyEnv ??
-      (llmProvider === "google" ? "GEMINI_API_KEY" : "OPENAI_API_KEY"),
+    apiKeyEnv: config.llm.apiKeyEnv ?? defaultApiKeyEnv[llmProvider],
     baseUrl: config.llm.baseUrl,
     temperature: config.llm.temperature
   };
@@ -178,6 +190,11 @@ export function normalizeConfig(
     ...(config.watcher ?? {})
   };
 
+  const cleanup = {
+    ...DEFAULT_CLEANUP,
+    ...(config.cleanup ?? {})
+  };
+
   return {
     rootDir,
     include: config.include ?? DEFAULT_INCLUDE,
@@ -188,7 +205,8 @@ export function normalizeConfig(
     i18n,
     llm,
     batch,
-    watcher
+    watcher,
+    cleanup
   };
 }
 

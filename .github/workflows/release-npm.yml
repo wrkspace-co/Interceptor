@@ -46,6 +46,9 @@ jobs:
         run: |
           npm version patch -m "chore(release): %s [skip ci]"
 
+      - name: Set release tag
+        run: echo "RELEASE_TAG=v$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
+
       - name: Publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -53,3 +56,10 @@ jobs:
 
       - name: Push tags
         run: git push --follow-tags
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: ${{ env.RELEASE_TAG }}
+          generate_release_notes: true

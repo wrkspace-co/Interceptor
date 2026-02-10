@@ -181,4 +181,41 @@ describe("compileOnce", () => {
 
     expect(esMessages).toMatchObject({ "home.title": "ES_Home Title" });
   });
+
+  it("removes unused keys when cleanup.removeUnused is enabled", async () => {
+    const rootDir = await createTempProject();
+    const sourceFile = path.join(rootDir, "src", "App.tsx");
+    await fs.writeFile(sourceFile, "t('Hello');\n", "utf8");
+
+    await fs.writeFile(
+      path.join(rootDir, "locales", "en.json"),
+      JSON.stringify({ Hello: "Hello", Unused: "Unused" }, null, 2)
+    );
+
+    const config: InterceptorConfig = {
+      rootDir,
+      include: ["src/**/*.{ts,tsx}"],
+      locales: ["en"],
+      defaultLocale: "en",
+      llm: {
+        provider: "openai",
+        model: "gpt-4o-mini",
+        apiKeyEnv: envKey
+      },
+      i18n: {
+        messagesPath: "locales/{locale}.json"
+      },
+      cleanup: {
+        removeUnused: true
+      }
+    };
+
+    await compileOnce(config, { cwd: rootDir, logger });
+
+    const enMessages = JSON.parse(
+      await fs.readFile(path.join(rootDir, "locales", "en.json"), "utf8")
+    );
+
+    expect(enMessages).toEqual({ Hello: "Hello" });
+  });
 });

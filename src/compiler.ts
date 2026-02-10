@@ -37,6 +37,7 @@ export async function compileOnce(
     resolveMessagesFile(normalized, sourceLocale)
   );
   const sourceByKey = buildSourceMap(uniqueMessages, sourceMessages);
+  const usedKeys = new Set(uniqueMessages.map((message) => message.key));
 
   for (const locale of normalized.locales) {
     const messagesFile = resolveMessagesFile(normalized, locale);
@@ -44,15 +45,21 @@ export async function compileOnce(
     const missing = uniqueMessages.filter(
       (message) => existing[message.key] === undefined
     );
+    const unusedKeys = normalized.cleanup.removeUnused
+      ? Object.keys(existing).filter((key) => !usedKeys.has(key))
+      : [];
+    const shouldPrune = unusedKeys.length > 0;
 
-    if (missing.length === 0) {
+    if (missing.length === 0 && !shouldPrune) {
       skippedLocales.push(locale);
       continue;
     }
 
+    const updated: Record<string, string> = { ...existing };
+
     if (locale === sourceLocale) {
       for (const message of missing) {
-        existing[message.key] = message.source;
+        updated[message.key] = message.source;
       }
     } else {
       const missingSources = missing.map(
@@ -67,11 +74,17 @@ export async function compileOnce(
       );
       for (let i = 0; i < missing.length; i += 1) {
         const fallback = missingSources[i] ?? missing[i].source;
-        existing[missing[i].key] = translations[i] ?? fallback;
+        updated[missing[i].key] = translations[i] ?? fallback;
       }
     }
 
-    await writeJsonFile(messagesFile, existing);
+    if (shouldPrune) {
+      for (const key of unusedKeys) {
+        delete updated[key];
+      }
+    }
+
+    await writeJsonFile(messagesFile, updated);
     updatedLocales.push(locale);
   }
 
