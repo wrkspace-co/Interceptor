@@ -1,6 +1,6 @@
 {
   "name": "@wrkspace-co/interceptor",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "On-demand translation compiler for i18n message files",
   "author": "Wrkspace Co.",
   "license": "MIT",
