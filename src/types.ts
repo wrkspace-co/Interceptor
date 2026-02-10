@@ -1,4 +1,12 @@
-export type LlmProvider = "openai" | "google";
+export type LlmProvider =
+  | "openai"
+  | "openai-compatible"
+  | "google"
+  | "anthropic"
+  | "mistral"
+  | "cohere"
+  | "groq"
+  | "deepseek";
 export type I18nProvider = "react-intl";
 
 export interface ReactIntlExtractorConfig {
@@ -84,6 +92,10 @@ export interface WatcherConfig {
   debounceMs?: number;
 }
 
+export interface CleanupConfig {
+  removeUnused?: boolean;
+}
+
 export interface InterceptorConfig {
   rootDir?: string;
   include?: string[];
@@ -95,6 +107,7 @@ export interface InterceptorConfig {
   llm: LlmConfig;
   batch?: BatchConfig;
   watcher?: WatcherConfig;
+  cleanup?: CleanupConfig;
 }
 
 export type ExtractedMessageOrigin =
@@ -129,6 +142,7 @@ export interface NormalizedConfig {
   };
   batch: Required<BatchConfig>;
   watcher: Required<WatcherConfig>;
+  cleanup: Required<CleanupConfig>;
 }
 
 export interface CompileResult {

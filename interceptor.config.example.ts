@@ -4,7 +4,7 @@ const config: InterceptorConfig = {
   locales: ["en", "es"],
   defaultLocale: "en",
   llm: {
-    provider: "openai", // or "google"
+    provider: "openai", // openai | openai-compatible | google | anthropic | mistral | cohere | groq | deepseek
     model: "gpt-4o-mini",
     apiKeyEnv: "OPENAI_API_KEY"
   },
@@ -39,6 +39,9 @@ const config: InterceptorConfig = {
   batch: {
     size: 20,
     delayMs: 0
+  },
+  cleanup: {
+    removeUnused: false
   }
 };
 
