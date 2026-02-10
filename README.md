@@ -2,14 +2,13 @@
 
 Interceptor is an on-demand translation compiler that scans your code for translation calls, translates missing strings via an LLM, and writes them into your i18n message files.
 
+**Docs:** [https://wrkspace-co.github.io/Interceptor/](https://wrkspace-co.github.io/Interceptor/)
+
 ## Features
-- Auto scan code and translate strings using an LLM
-- React-intl, i18next, and Vue i18n extraction (extensible)
-- Never overwrite existing translations (your manual fixes stay intact)
-- Configurable locales, model, and file layout
-- ENV-based API key loading
-- Batch translation to avoid overloads
-- Watch mode for continuous compilation
+- Auto scan and translate missing keys with LLMs
+- Works with popular i18n libraries (react-intl, i18next, vue-i18n) and custom `t()` calls
+- Never overwrites existing translations
+- Watch mode and batching
 - TypeScript-first
 
 ## Install
@@ -17,59 +16,8 @@ Interceptor is an on-demand translation compiler that scans your code for transl
 pnpm add -D @wrkspace-co/interceptor
 ```
 
-## Environment
-Create a `.env` file at the project root (same folder where you run the CLI or your bundler) and add your real API key.
-
-OpenAI:
-```bash
-OPENAI_API_KEY=sk-your-real-key
-```
-
-OpenAI-compatible:
-```bash
-OPENAI_COMPAT_API_KEY=your-provider-key
-```
-
-Google AI (Gemini):
-```bash
-GEMINI_API_KEY=your-google-ai-key
-```
-
-Anthropic (Claude):
-```bash
-ANTHROPIC_API_KEY=your-anthropic-key
-```
-
-Mistral:
-```bash
-MISTRAL_API_KEY=your-mistral-key
-```
-
-Cohere:
-```bash
-COHERE_API_KEY=your-cohere-key
-```
-
-Groq:
-```bash
-GROQ_API_KEY=your-groq-key
-```
-
-DeepSeek:
-```bash
-DEEPSEEK_API_KEY=your-deepseek-key
-```
-
-If you use a different environment variable name, set `llm.apiKeyEnv` in the config and put that key name in `.env`.
-
 ## Quick start
-1. Create `interceptor.config.ts`.
-2. Run:
-```bash
-pnpm interceptor
-```
-
-## Example config
+1. Create `interceptor.config.ts`:
 ```ts
 import type { InterceptorConfig } from "@wrkspace-co/interceptor";
 
@@ -77,80 +25,28 @@ const config: InterceptorConfig = {
   locales: ["en", "fr"],
   defaultLocale: "en",
   llm: {
-    provider: "openai", // or "google"
+    provider: "openai",
     model: "gpt-4o-mini",
     apiKeyEnv: "OPENAI_API_KEY"
   },
   i18n: {
-    // Align with your i18n messages path
     messagesPath: "src/locales/{locale}.json"
-  },
-  extractor: {
-    functions: ["t"],
-    taggedTemplates: [],
-    reactIntl: {
-      formatMessage: true,
-      formattedMessage: true,
-      defineMessages: true
-    }
-  },
-  batch: {
-    size: 20,
-    delayMs: 0
-  },
-  cleanup: {
-    removeUnused: false
   }
 };
 
 export default config;
 ```
-
-## Config formats
-Interceptor loads (in order) `interceptor.config.ts/js/cjs/mjs/json` from the current directory or any parent directory.
-
-## LLM providers
-Supported providers:
-- `openai`
-- `openai-compatible`
-- `google` (Gemini)
-- `anthropic` (Claude)
-- `mistral`
-- `cohere`
-- `groq`
-- `deepseek`
-
-Example for Anthropic:
-```ts
-llm: {
-  provider: "anthropic",
-  model: "claude-3-5-sonnet-20240620",
-  apiKeyEnv: "ANTHROPIC_API_KEY"
-}
-```
-
-Example for OpenAI-compatible providers:
-```ts
-llm: {
-  provider: "openai-compatible",
-  model: "your-model-name",
-  apiKeyEnv: "OPENAI_COMPAT_API_KEY",
-  baseUrl: "https://your-provider.com/v1"
-}
-```
-`llm.baseUrl` is required for openai-compatible providers.
-
-## CLI
+2. Add `.env`:
 ```bash
-interceptor               # run once
-interceptor compile       # run once
-interceptor watch         # watch and re-run on change
-interceptor --config path/to/config.ts
-interceptor --cwd path/to/project
+OPENAI_API_KEY=sk-your-real-key
+```
+3. Run:
+```bash
+pnpm interceptor
 ```
 
-## Vite
-Interceptor’s Vite plugin runs the compiler at build time and (by default) in dev watch mode.
+## Examples
+Vite:
 ```ts
 import { defineConfig } from "vite";
 import { interceptorVitePlugin } from "@wrkspace-co/interceptor/vite";
@@ -160,8 +56,7 @@ export default defineConfig({
 });
 ```
 
-## Webpack
-Interceptor’s Webpack plugin runs the compiler before build and in watch mode when Webpack runs with `watch`.
+Webpack:
 ```js
 const { InterceptorWebpackPlugin } = require("@wrkspace-co/interceptor/webpack");
 
@@ -170,30 +65,11 @@ module.exports = {
 };
 ```
 
-## How It Works
-1. **Scan**: Interceptor parses your source files and collects translatable strings from:
-   - `t("...")` calls (i18next, vue-i18n, or your custom function)
-   - `intl.formatMessage({ id, defaultMessage })`
-   - `<FormattedMessage id="..." defaultMessage="..." />`
-   - `defineMessages({ key: { id, defaultMessage } })`
-   - `i18n.t("key", "Default")` and `t("key", { defaultValue })`
-   - `<Trans i18nKey="key">Default</Trans>` (react-i18next)
-2. **Diff**: It reads your existing locale JSON files and keeps any keys already present.
-3. **Translate**: Only missing keys are sent to the LLM (batched to avoid overload).
-4. **Write**: It writes/updates the locale JSON files with new keys only (existing translations remain untouched).
+## LLMs
+Supports OpenAI, Gemini, Claude, Mistral, Cohere, Groq, DeepSeek, and OpenAI-compatible providers. See docs for configuration examples.
 
-## Notes
-- Extraction is string-literal only (e.g. `t('Hello')` or `defaultMessage: "Hello"`).
-- When an `id` is present, it becomes the translation key. Otherwise the `defaultMessage` is used as the key.
-- Only missing keys are sent to the LLM; existing translations are left untouched.
-- For non-default locales, Interceptor prefers the default-locale file value as the translation source when available.
-- Interceptor writes flat JSON objects. Nested or namespaced formats are not supported in v0.1.
-- For custom file layouts, set `i18n.messagesPath` or `i18n.resolveMessagesFile`.
-- For `.vue` files, only `<script>` blocks are parsed (template extraction is not implemented yet).
-- To remove stale keys, enable `cleanup.removeUnused` in the config (disabled by default).
-
-## Roadmap ideas
-- Pluralization-aware translation
+## Learn more
+[Full documentation](https://wrkspace-co.github.io/Interceptor/)
 
 **Credits**
 Interceptor is a part of [Wrkspace Co.](https://wrkspace.co) &copy; group.
