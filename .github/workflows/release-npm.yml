@@ -47,7 +47,9 @@ jobs:
           npm version patch -m "chore(release): %s [skip ci]"
 
       - name: Set release tag
-        run: echo "RELEASE_TAG=v$(node -p \"require('./package.json').version\")" >> $GITHUB_ENV
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "RELEASE_TAG=v$VERSION" >> $GITHUB_ENV
 
       - name: Publish
         env:
