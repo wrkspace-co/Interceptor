@@ -3,7 +3,7 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   title: "Interceptor",
   description: "On-demand translation compiler for i18n message files",
-  base: "/interceptor/",
+  base: "/Interceptor/",
   themeConfig: {
     nav: [
       { text: "Guide", link: "/guide/overview" },
