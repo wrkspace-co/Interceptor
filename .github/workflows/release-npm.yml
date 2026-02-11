@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   release:
+    if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, 'feat(release):') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,43 +30,28 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           cache: pnpm
 
-      - name: Check version changed
-        id: version_change
-        run: |
-          if git diff --unified=0 ${{ github.event.before }} ${{ github.sha }} -- package.json | grep -E '^[+-]\\s+"version"'; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "changed=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Install
-        if: steps.version_change.outputs.changed == 'true'
         run: pnpm install
 
       - name: Set release version
-        if: steps.version_change.outputs.changed == 'true'
         run: |
           VERSION=$(node -p "require('./package.json').version")
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
           echo "RELEASE_TAG=v$VERSION" >> $GITHUB_ENV
 
       - name: Test
-        if: steps.version_change.outputs.changed == 'true'
         run: pnpm test
 
       - name: Build
-        if: steps.version_change.outputs.changed == 'true'
         run: pnpm build
 
       - name: Publish
-        if: steps.version_change.outputs.changed == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
-        if: steps.version_change.outputs.changed == 'true'
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ env.RELEASE_TAG }}
