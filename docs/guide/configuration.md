@@ -2,13 +2,13 @@
 
 Interceptor loads `interceptor.config.ts/js/cjs/mjs/json` from the current directory or any parent directory.
 
-## Core options
+## Full example
 ```ts
 import type { InterceptorConfig } from "@wrkspace-co/interceptor";
 
 const config: InterceptorConfig = {
   rootDir: ".",
-  include: ["src/**/*.{ts,tsx,js,jsx}"],
+  include: ["src/**/*.{ts,tsx,js,jsx,vue,svelte,astro}"],
   exclude: ["**/node_modules/**", "**/dist/**"],
   locales: ["en", "fr"],
   defaultLocale: "en",
@@ -39,7 +39,7 @@ const config: InterceptorConfig = {
     },
     vueI18n: {
       enabled: true,
-      functions: [],
+      functions: ["$t"],
       memberFunctions: ["t", "$t"],
       objects: ["i18n", "$i18n", "i18nGlobal", "i18nInstance", "this"],
       keyAsDefault: true
@@ -47,7 +47,8 @@ const config: InterceptorConfig = {
   },
   batch: {
     size: 20,
-    delayMs: 0
+    delayMs: 0,
+    localeConcurrency: 2
   },
   watcher: {
     debounceMs: 200
@@ -60,47 +61,66 @@ const config: InterceptorConfig = {
 export default config;
 ```
 
-## LLM providers
-OpenAI:
-```ts
-llm: {
-  provider: "openai",
-  model: "gpt-4o-mini",
-  apiKeyEnv: "OPENAI_API_KEY"
-}
-```
+## Core options
+- `rootDir`: Base directory for resolving paths.
+- `include`: Glob patterns to scan.
+- `exclude`: Glob patterns to ignore.
+- `locales`: List of locale codes.
+- `defaultLocale`: Locale used as the source language.
 
-Google AI (Gemini):
-```ts
-llm: {
-  provider: "google",
-  model: "gemini-1.5-flash",
-  apiKeyEnv: "GEMINI_API_KEY"
-}
-```
-
-## Custom locale paths
-Use `i18n.messagesPath` with `{locale}` placeholder:
+## i18n file locations
+Use a template path with `{locale}`:
 ```ts
 i18n: {
-  messagesPath: "src/i18n/{locale}.json"
+  messagesPath: "src/locales/{locale}.json"
 }
 ```
 
-Or use a resolver for complete control:
+Or use a resolver:
 ```ts
 i18n: {
   resolveMessagesFile: (locale) => `src/i18n/${locale}/messages.json`
 }
 ```
 
+## LLM configuration
+```ts
+llm: {
+  provider: "openai",
+  model: "gpt-4o-mini",
+  apiKeyEnv: "OPENAI_API_KEY",
+  baseUrl: "https://api.example.com/v1",
+  temperature: 0.2
+}
+```
+
+## Extraction configuration
+- `functions`: Global function names like `t`.
+- `taggedTemplates`: Tagged templates like ``t`key` ``.
+- `reactIntl`: Enable react-intl extraction.
+- `i18next`: Enable i18next extraction and default value handling.
+- `vueI18n`: Enable vue-i18n extraction for scripts and templates.
+
+## Batch configuration
+```ts
+batch: {
+  size: 20,
+  delayMs: 0,
+  localeConcurrency: 2
+}
+```
+`localeConcurrency` controls how many locales are translated in parallel.
+
+## Watcher configuration
+```ts
+watcher: {
+  debounceMs: 200
+}
+```
+
 ## Cleanup unused keys
-Enable cleanup to remove unused keys from locale files:
 ```ts
 cleanup: {
   removeUnused: true
 }
 ```
-
-## Vue SFC notes
-For `.vue` files, Interceptor currently parses only `<script>` blocks. Template-only strings are not extracted yet.

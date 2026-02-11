@@ -86,6 +86,7 @@ export interface LlmConfig {
 export interface BatchConfig {
   size?: number;
   delayMs?: number;
+  localeConcurrency?: number;
 }
 
 export interface WatcherConfig {

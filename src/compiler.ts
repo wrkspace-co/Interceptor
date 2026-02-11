@@ -1,24 +1,36 @@
-import fg from "fast-glob";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { createHash } from "node:crypto";
 import { normalizeConfig, resolveMessagesFile } from "./config";
-import { extractMessagesFromFiles } from "./extractor";
+import { extractMessagesFromContent } from "./extractor";
+import { scanFiles } from "./file-scanner";
+import {
+  createEmptyCache,
+  loadExtractionCache,
+  saveExtractionCache,
+  type ExtractionCacheEntry
+} from "./extraction-cache";
 import { translateBatch } from "./translator";
-import { chunk, delay, readJsonFile, writeJsonFile } from "./utils";
+import { chunk, delay, readJsonFile, runWithConcurrency, writeJsonFile } from "./utils";
 import { CompileResult, ExtractedMessage, InterceptorConfig, Logger } from "./types";
+
+const FILE_CONCURRENCY = Math.max(2, Math.min(os.cpus().length, 8));
 
 export async function compileOnce(
   config: InterceptorConfig,
-  options: { cwd?: string; logger?: Logger } = {}
+  options: { cwd?: string; logger?: Logger; files?: string[] } = {}
 ): Promise<CompileResult> {
   const normalized = normalizeConfig(config, options.cwd);
   const logger = options.logger ?? console;
 
-  const files = await fg(normalized.include, {
-    cwd: normalized.rootDir,
-    absolute: true,
-    ignore: normalized.exclude
-  });
-
-  const extracted = await extractMessagesFromFiles(files, normalized);
+  const files = options.files ?? (await scanFiles(normalized));
+  const { messages: extracted, cache } = await extractMessagesIncremental(
+    files,
+    normalized,
+    logger
+  );
+  await saveExtractionCache(normalized, cache);
   const uniqueMessages = dedupeMessages(extracted, logger);
 
   if (uniqueMessages.length === 0) {
@@ -39,7 +51,7 @@ export async function compileOnce(
   const sourceByKey = buildSourceMap(uniqueMessages, sourceMessages);
   const usedKeys = new Set(uniqueMessages.map((message) => message.key));
 
-  for (const locale of normalized.locales) {
+  const localeTasks = normalized.locales.map((locale) => async () => {
     const messagesFile = resolveMessagesFile(normalized, locale);
     const existing = await readJsonFile(messagesFile);
     const missing = uniqueMessages.filter(
@@ -51,8 +63,7 @@ export async function compileOnce(
     const shouldPrune = unusedKeys.length > 0;
 
     if (missing.length === 0 && !shouldPrune) {
-      skippedLocales.push(locale);
-      continue;
+      return { locale, updated: false };
     }
 
     const updated: Record<string, string> = { ...existing };
@@ -85,7 +96,20 @@ export async function compileOnce(
     }
 
     await writeJsonFile(messagesFile, updated);
-    updatedLocales.push(locale);
+    return { locale, updated: true };
+  });
+
+  const localeResults = await runWithConcurrency(
+    localeTasks,
+    normalized.batch.localeConcurrency
+  );
+
+  for (const result of localeResults) {
+    if (result.updated) {
+      updatedLocales.push(result.locale);
+    } else {
+      skippedLocales.push(result.locale);
+    }
   }
 
   return {
@@ -93,6 +117,72 @@ export async function compileOnce(
     updatedLocales,
     skippedLocales
   };
+}
+
+async function extractMessagesIncremental(
+  files: string[],
+  config: ReturnType<typeof normalizeConfig>,
+  logger: Logger
+): Promise<{ messages: ExtractedMessage[]; cache: ReturnType<typeof createEmptyCache> }> {
+  const cache = await loadExtractionCache(config);
+  const nextCache = createEmptyCache(cache.key);
+
+  const tasks = files.map((filePath) => async () => {
+    const relative = path.relative(config.rootDir, filePath);
+    let stat: { mtimeMs: number; size: number };
+    try {
+      const fsStat = await fs.stat(filePath);
+      stat = { mtimeMs: fsStat.mtimeMs, size: fsStat.size };
+    } catch {
+      return null;
+    }
+
+    try {
+      const cached = cache.files[relative];
+      if (cached && cached.mtimeMs === stat.mtimeMs && cached.size === stat.size) {
+        return { relative, entry: cached, messages: cached.messages };
+      }
+
+      const content = await fs.readFile(filePath, "utf8");
+      const hash = createHash("sha1").update(content).digest("hex");
+      if (cached && cached.hash === hash) {
+        const entry: ExtractionCacheEntry = {
+          ...cached,
+          mtimeMs: stat.mtimeMs,
+          size: stat.size,
+          hash
+        };
+        return { relative, entry, messages: cached.messages };
+      }
+
+      const messages = extractMessagesFromContent(content, filePath, config);
+      const entry: ExtractionCacheEntry = {
+        mtimeMs: stat.mtimeMs,
+        size: stat.size,
+        hash,
+        messages
+      };
+      return { relative, entry, messages };
+    } catch (error) {
+      logger.warn(
+        `Interceptor: failed to extract ${filePath} - ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+      return null;
+    }
+  });
+
+  const results = await runWithConcurrency(tasks, FILE_CONCURRENCY);
+  const extracted: ExtractedMessage[] = [];
+
+  for (const result of results) {
+    if (!result) continue;
+    nextCache.files[result.relative] = result.entry;
+    extracted.push(...result.messages);
+  }
+
+  return { messages: extracted, cache: nextCache };
 }
 
 async function translateMissing(

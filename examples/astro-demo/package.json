@@ -1,0 +1,16 @@
+{
+  "name": "interceptor-astro-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^4.16.0"
+  },
+  "devDependencies": {
+    "@wrkspace-co/interceptor": "file:../.."
+  }
+}

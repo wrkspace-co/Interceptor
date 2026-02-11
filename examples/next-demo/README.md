@@ -16,14 +16,14 @@ pnpm install
 ## Add your API key
 Create `.env` in this folder:
 
-OpenAI:
-```bash
-OPENAI_API_KEY=sk-your-real-key
-```
-
 Google AI:
 ```bash
 GEMINI_API_KEY=your-google-ai-key
+```
+
+If you prefer OpenAI, change `interceptor.config.ts` to use `provider: "openai"` and set:
+```bash
+OPENAI_API_KEY=sk-your-real-key
 ```
 
 ## Run Interceptor
@@ -37,3 +37,7 @@ This will update `src/locales/es.json` with missing keys.
 ```bash
 pnpm dev
 ```
+
+## Routes
+- `/` uses i18next in a client component.
+- `/server` is a server component to validate RSC extraction.

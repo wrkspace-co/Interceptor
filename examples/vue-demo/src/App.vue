@@ -3,6 +3,7 @@
     <h1>{{ title }}</h1>
     <p>{{ subtitle }}</p>
     <p>{{ legacyTitle }}</p>
+    <p>{{ $t("vue.template") }}</p>
   </main>
 </template>
 

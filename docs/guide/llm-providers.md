@@ -1,6 +1,18 @@
 # LLM Providers
 
-Interceptor supports multiple LLM providers. Configure the provider in `llm.provider`, choose a model, and set the API key env var in `.env`.
+Interceptor supports multiple LLM providers. Configure one provider in `interceptor.config.ts` and set the matching API key in `.env`.
+
+## Provider matrix
+| Provider | Env var | Notes |
+| --- | --- | --- |
+| OpenAI | `OPENAI_API_KEY` | Official OpenAI API |
+| OpenAI-compatible | `OPENAI_COMPAT_API_KEY` | Requires `baseUrl` |
+| Google (Gemini) | `GEMINI_API_KEY` | Google AI Studio |
+| Anthropic (Claude) | `ANTHROPIC_API_KEY` | Claude models |
+| Mistral | `MISTRAL_API_KEY` | Mistral API |
+| Cohere | `COHERE_API_KEY` | Cohere API |
+| Groq | `GROQ_API_KEY` | Groq API |
+| DeepSeek | `DEEPSEEK_API_KEY` | DeepSeek API |
 
 ## OpenAI
 ```ts
@@ -12,7 +24,6 @@ llm: {
 ```
 
 ## OpenAI-compatible
-Use this provider with any OpenAI-compatible endpoint (e.g. hosted gateways or custom proxies).
 ```ts
 llm: {
   provider: "openai-compatible",
@@ -21,7 +32,6 @@ llm: {
   baseUrl: "https://your-provider.com/v1"
 }
 ```
-`llm.baseUrl` is required for this provider.
 
 ## Google (Gemini)
 ```ts
@@ -45,7 +55,7 @@ llm: {
 ```ts
 llm: {
   provider: "mistral",
-  model: "mistral-small",
+  model: "mistral-small-latest",
   apiKeyEnv: "MISTRAL_API_KEY"
 }
 ```
@@ -63,7 +73,7 @@ llm: {
 ```ts
 llm: {
   provider: "groq",
-  model: "llama-3.1-8b-instant",
+  model: "llama3-8b-8192",
   apiKeyEnv: "GROQ_API_KEY"
 }
 ```
@@ -77,6 +87,5 @@ llm: {
 }
 ```
 
-## Notes
-- You can override endpoints with `llm.baseUrl`.
-- Keep requests small by tuning `batch.size`.
+## Custom env var name
+If your key is stored under another environment variable, set `llm.apiKeyEnv` to that name.

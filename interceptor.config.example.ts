@@ -30,7 +30,7 @@ const config: InterceptorConfig = {
     },
     vueI18n: {
       enabled: true,
-      functions: [],
+      functions: ["$t"],
       memberFunctions: ["t", "$t"],
       objects: ["i18n", "$i18n", "i18nGlobal", "i18nInstance", "this"],
       keyAsDefault: true
@@ -38,7 +38,8 @@ const config: InterceptorConfig = {
   },
   batch: {
     size: 20,
-    delayMs: 0
+    delayMs: 0,
+    localeConcurrency: 2
   },
   cleanup: {
     removeUnused: false

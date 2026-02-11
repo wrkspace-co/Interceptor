@@ -2,22 +2,24 @@
 layout: home
 hero:
   name: Interceptor
-  text: On-demand i18n translation compiler
-  tagline: Scan code, translate missing strings, and keep your message files up to date.
+  text: Enterprise-grade i18n translation compiler
+  tagline: Scan code, translate missing strings with LLMs, and keep locale files consistent.
   actions:
     - theme: brand
       text: Get Started
-      link: /guide/overview
+      link: /guide/getting-started
     - theme: alt
-      text: Vite Integration
-      link: /integrations/vite
+      text: Read the Guide
+      link: /guide/overview
 features:
-  - title: Source scanning
-    details: Extract strings from translation calls and react-intl patterns.
-  - title: Only missing keys
-    details: Existing translations are preserved and never overwritten.
-  - title: LLM batching
-    details: Batch requests to reduce API load and cost.
-  - title: Multiple providers
-    details: OpenAI and Google AI (Gemini) supported.
+  - title: Broad extraction coverage
+    details: Supports react-intl, i18next, vue-i18n, next-intl, and common custom t() patterns.
+  - title: Works across frameworks
+    details: Vite, Webpack, Next.js App Router, Svelte, Astro, and Vue SFCs.
+  - title: Safe by default
+    details: Only missing keys are sent to LLMs. Existing translations are preserved.
+  - title: Provider flexibility
+    details: OpenAI, Claude, Gemini, Mistral, Cohere, Groq, DeepSeek, and OpenAI-compatible APIs.
+  - title: Production-friendly
+    details: Batch translation, watch mode, and optional cleanup for unused keys.
 ---

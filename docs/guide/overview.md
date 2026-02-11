@@ -1,80 +1,38 @@
 # Overview
 
-Interceptor is a translation compiler that keeps your i18n message files up to date. It scans your source code, finds translation strings, translates missing keys using an LLM, and writes updates to your locale files.
+Interceptor is an on-demand translation compiler. It scans your source code for translation calls, identifies missing keys, and writes translations into your locale files using an LLM. It is designed to integrate into build pipelines and stay out of the way once configured.
 
-## Installation
-```bash
-pnpm add -D @wrkspace-co/interceptor
-```
+## Why teams use Interceptor
+- Keep locale files synchronized with the source of truth in code
+- Avoid overwriting manual edits or translator fixes
+- Support multiple frameworks and i18n libraries in a single monorepo
+- Automate translation safely with batching and rate-limit awareness
+- Speed up builds with incremental extraction and cached file lists
 
-## Quick start
-1. Add a config file in your project root.
-2. Add your LLM API key to `.env`.
-3. Run the CLI or integrate with your build tool.
+## Supported coverage
+### Frameworks
+- Vite-based stacks: Vue, SvelteKit, SolidStart, Astro, Nuxt 3
+- Webpack-based stacks: Next.js (Pages + App Router), CRA, Gatsby
 
-Example config:
-```ts
-import type { InterceptorConfig } from "@wrkspace-co/interceptor";
+### Files
+- `.ts`, `.tsx`, `.js`, `.jsx`
+- `.vue` SFCs (`<script>`, `<template>`, `<i18n>`)
+- `.svelte` (script + template expressions)
+- `.astro` (frontmatter + template expressions)
 
-const config: InterceptorConfig = {
-  locales: ["en", "es"],
-  defaultLocale: "en",
-  llm: {
-    provider: "openai",
-    model: "gpt-4o-mini",
-    apiKeyEnv: "OPENAI_API_KEY"
-  },
-  i18n: {
-    messagesPath: "src/locales/{locale}.json"
-  },
-  extractor: {
-    functions: ["t"],
-    taggedTemplates: [],
-    reactIntl: {
-      formatMessage: true,
-      formattedMessage: true,
-      defineMessages: true
-    }
-  },
-  batch: {
-    size: 20,
-    delayMs: 0
-  }
-};
-
-export default config;
-```
-
-## Environment
-Create a `.env` file in your project root:
-
-OpenAI:
-```bash
-OPENAI_API_KEY=sk-your-real-key
-```
-
-Google AI (Gemini):
-```bash
-GEMINI_API_KEY=your-google-ai-key
-```
-
-If you use a different variable name, set `llm.apiKeyEnv` in the config. See the LLM Providers page for other keys.
-
-## Supported frameworks
-- Vite-based stacks (Vue, SvelteKit, SolidStart, Astro, Nuxt 3)
-- Webpack-based stacks (Next.js, CRA, Gatsby)
-
-## Supported extractors
+### Default extractors
 - react-intl (`formatMessage`, `FormattedMessage`, `defineMessages`)
-- i18next (`t`, `i18n.t`, `Trans`)
-- vue-i18n (`t`, `$t` in script blocks)
+- i18next (`t`, `i18n.t`, `Trans`, `useTranslation`)
+- vue-i18n (`t`, `$t` in script/template, SFC `<i18n>` blocks)
+- next-intl (`useTranslations`, `getTranslations`)
+- Custom `t()` calls and tagged templates
 
-## Supported LLMs
-- OpenAI
-- OpenAI-compatible
-- Google (Gemini)
-- Anthropic (Claude)
-- Mistral
-- Cohere
-- Groq
-- DeepSeek
+## Typical workflow
+1. Configure locales, i18n file path, and LLM provider.
+2. Run `interceptor` in CI or as part of your build.
+3. Review updated locale files. Edit translations manually if needed.
+
+## Next steps
+- [Quick Start](/guide/getting-started)
+- [Extraction & Coverage](/guide/extraction)
+- [Configuration](/guide/configuration)

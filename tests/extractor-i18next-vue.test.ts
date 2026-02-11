@@ -57,11 +57,19 @@ describe("i18next extraction", () => {
 });
 
 describe("vue-i18n extraction", () => {
-  it("extracts from <script setup> in .vue files", async () => {
+  it("extracts from <script>, <template>, and <i18n> blocks in .vue files", async () => {
     const code = `
       <template>
-        <div>{{ $t('template.ignored') }}</div>
+        <div>{{ $t('vue.template') }}</div>
+        <div :title="t('vue.attr')"></div>
       </template>
+      <i18n>
+      {
+        "en": {
+          "vue.block": "Vue Block"
+        }
+      }
+      </i18n>
       <script setup lang="ts">
       import { useI18n } from "vue-i18n";
       const { t } = useI18n();
@@ -86,9 +94,12 @@ describe("vue-i18n extraction", () => {
     });
 
     const messages = await extractMessagesFromFile(filePath, normalized);
-    const keys = new Set(messages.map((msg) => msg.key));
+    const map = new Map(messages.map((msg) => [msg.key, msg.source]));
 
-    expect(keys.has("vue.welcome")).toBe(true);
-    expect(keys.has("vue.greeting")).toBe(true);
+    expect(map.get("vue.template")).toBe("vue.template");
+    expect(map.get("vue.attr")).toBe("vue.attr");
+    expect(map.get("vue.welcome")).toBe("vue.welcome");
+    expect(map.get("vue.greeting")).toBe("vue.greeting");
+    expect(map.get("vue.block")).toBe("Vue Block");
   });
 });

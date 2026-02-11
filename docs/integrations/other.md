@@ -1,9 +1,9 @@
 # Other Frameworks
 
-Interceptor works with most modern stacks because it integrates at the build tool level.
+Interceptor integrates at the build tool level, so most modern stacks are supported.
 
 ## Vite-based frameworks
-Use the Vite plugin:
+Use the Vite plugin for:
 - Nuxt 3
 - SvelteKit
 - SolidStart
@@ -20,10 +20,11 @@ export default defineConfig({
 ```
 
 ## Webpack-based frameworks
-Use the Webpack plugin:
+Use the Webpack plugin for:
 - Create React App
 - Gatsby
-- Older Next.js setups
+- Next.js (Pages + App Router)
+- React Server Components
 
 Example:
 ```js
