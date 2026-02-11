@@ -3,8 +3,6 @@ name: Release to npm
 on:
   push:
     branches: ["master"]
-    paths:
-      - "package.json"
   workflow_dispatch:
 
 permissions:
