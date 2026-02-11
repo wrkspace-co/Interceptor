@@ -2,7 +2,9 @@ node_modules
 .DS_Store
 .env
 .env.*
+!.env.example
 dist
 coverage
+.interceptor
 *.log
 docs/.vitepress/cache

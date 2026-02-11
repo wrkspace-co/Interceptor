@@ -18,7 +18,7 @@ const DEFAULT_CONFIG_NAMES = [
   "interceptor.config.json"
 ];
 
-const DEFAULT_INCLUDE = ["src/**/*.{js,jsx,ts,tsx,vue}"];
+const DEFAULT_INCLUDE = ["src/**/*.{js,jsx,ts,tsx,vue,svelte,astro}"];
 const DEFAULT_EXCLUDE = [
   "**/node_modules/**",
   "**/dist/**",
@@ -46,7 +46,7 @@ const DEFAULT_EXTRACTOR: NormalizedExtractorConfig = {
   },
   vueI18n: {
     enabled: true,
-    functions: [],
+    functions: ["$t"],
     memberFunctions: ["t", "$t"],
     objects: ["i18n", "$i18n", "i18nGlobal", "i18nInstance", "this"],
     keyAsDefault: true
@@ -62,7 +62,8 @@ const DEFAULT_I18N: Required<Omit<I18nConfig, "resolveMessagesFile">> = {
 
 const DEFAULT_BATCH: Required<BatchConfig> = {
   size: 20,
-  delayMs: 0
+  delayMs: 0,
+  localeConcurrency: 2
 };
 
 const DEFAULT_WATCHER: Required<WatcherConfig> = {

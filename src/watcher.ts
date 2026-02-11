@@ -1,6 +1,8 @@
 import chokidar from "chokidar";
+import path from "node:path";
 import { normalizeConfig } from "./config";
 import { compileOnce } from "./compiler";
+import { scanFiles } from "./file-scanner";
 import { InterceptorConfig, Logger } from "./types";
 
 export interface WatchHandle {
@@ -14,6 +16,11 @@ export async function watchAndCompile(
   const logger = options.logger ?? console;
   const normalized = normalizeConfig(config, options.cwd);
 
+  const initialFiles = await scanFiles(normalized);
+  const files = new Set(initialFiles);
+  const toAbsolute = (filePath: string) =>
+    path.isAbsolute(filePath) ? filePath : path.resolve(normalized.rootDir, filePath);
+
   let debounceTimer: NodeJS.Timeout | null = null;
   let running = false;
   let pending = false;
@@ -26,7 +33,7 @@ export async function watchAndCompile(
 
     running = true;
     try {
-      await compileOnce(config, options);
+      await compileOnce(config, { ...options, files: Array.from(files) });
     } catch (error) {
       logger.error(
         `Interceptor: compile failed - ${
@@ -58,9 +65,15 @@ export async function watchAndCompile(
     ignoreInitial: true
   });
 
-  watcher.on("add", schedule);
+  watcher.on("add", (filePath) => {
+    files.add(toAbsolute(filePath));
+    schedule();
+  });
   watcher.on("change", schedule);
-  watcher.on("unlink", schedule);
+  watcher.on("unlink", (filePath) => {
+    files.delete(toAbsolute(filePath));
+    schedule();
+  });
 
   logger.info("Interceptor: watching for changes...");
   await runCompile();

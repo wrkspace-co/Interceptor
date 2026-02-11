@@ -13,15 +13,15 @@ Then in this demo folder:
 pnpm install
 ```
 
-## Add your OpenAI key
+## Add your API key
 Create `.env` in this folder:
 ```bash
-OPENAI_API_KEY=sk-your-real-key
+GEMINI_API_KEY=your-google-ai-key
 ```
 
-If you prefer Google AI, change `interceptor.config.ts` to use `provider: "google"` and set:
+If you prefer OpenAI, change `interceptor.config.ts` to use `provider: "openai"` and set:
 ```bash
-GEMINI_API_KEY=your-google-ai-key
+OPENAI_API_KEY=sk-your-real-key
 ```
 
 ## Run Interceptor

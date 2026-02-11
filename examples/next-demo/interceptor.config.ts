@@ -7,7 +7,7 @@ const config: InterceptorConfig = {
   llm: {
     provider: "google",
     model: "gemini-2.5-flash-lite",
-    apiKeyEnv: "GOOGLEAI_API_KEY"
+    apiKeyEnv: "GEMINI_API_KEY"
   },
   i18n: {
     messagesPath: "src/locales/{locale}.json"
@@ -32,7 +32,8 @@ const config: InterceptorConfig = {
   },
   batch: {
     size: 10,
-    delayMs: 0
+    delayMs: 0,
+    localeConcurrency: 2
   }
 };
 

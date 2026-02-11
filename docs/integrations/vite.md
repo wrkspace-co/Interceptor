@@ -1,6 +1,6 @@
 # Vite
 
-Interceptor integrates with Vite via a plugin that runs the compiler at build time and in dev watch mode.
+Use the Vite plugin to run Interceptor during build and in dev watch mode.
 
 ## Install
 ```bash
@@ -10,19 +10,13 @@ pnpm add -D @wrkspace-co/interceptor
 ## Configure
 ```ts
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
 import { interceptorVitePlugin } from "@wrkspace-co/interceptor/vite";
 
 export default defineConfig({
-  plugins: [
-    react(),
-    interceptorVitePlugin({
-      configPath: "interceptor.config.ts"
-    })
-  ]
+  plugins: [interceptorVitePlugin({ configPath: "interceptor.config.ts" })]
 });
 ```
 
 ## Notes
-- The plugin will load `.env` from your project root.
-- Set `watch: false` if you want to disable watch mode in dev.
+- The plugin loads `.env` from your project root.
+- In dev mode it watches files and re-runs on changes.

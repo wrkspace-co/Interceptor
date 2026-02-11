@@ -1,28 +1,23 @@
 # How It Works
 
-Interceptor follows a simple pipeline every time it runs.
+Interceptor follows a deterministic pipeline on every run.
 
 ## 1. Scan
-It parses your source files and extracts strings from configured patterns.
-
-Default extractors:
-- `t("...")`
-- `intl.formatMessage({ id, defaultMessage })`
-- `<FormattedMessage id="..." defaultMessage="..." />`
-- `defineMessages({ key: { id, defaultMessage } })`
-- `i18n.t("key", "Default")` and `t("key", { defaultValue })`
-- `<Trans i18nKey="key">Default</Trans>` (react-i18next)
-
-You can change or disable extractors via `extractor` in the config.
+The extractor parses supported files and collects translation calls based on your configuration. Extraction is static and string-literal only. Interceptor caches file hashes so unchanged files are not re-parsed on subsequent runs.
 
 ## 2. Diff
-Interceptor loads your existing locale files and compares them with the extracted keys. It keeps all existing translations intact.
+Existing locale files are loaded and compared with extracted keys. Keys already present are never overwritten.
 
 ## 3. Translate
-Only missing keys are sent to the LLM provider. If the default locale file already contains a value for a key, that value is used as the translation source. Strings are batched to reduce API load and rate-limit issues.
+Only missing keys are sent to the configured LLM provider. Strings are batched to control costs and rate limits. If the default locale already has a value for a key, that value is used as the translation source.
 
 ## 4. Write
-The compiler writes the new keys into your locale files while preserving existing entries. For the default locale, the source string is used directly.
+Locale files are updated with new keys. The default locale is populated with the source string. Other locales receive the translated value.
 
 ## Optional: Cleanup
-If `cleanup.removeUnused` is enabled, Interceptor removes keys that are no longer referenced by your source code.
+If `cleanup.removeUnused` is enabled, keys not referenced by source code are removed from locale files.
+
+## Guarantees
+- Existing translations are preserved.
+- Only missing keys are translated.
+- File writes are deterministic and stable between runs.

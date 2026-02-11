@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.4] - 2026-02-11
+### Added
+- Vue SFC `<template>` and `<i18n>` block extraction.
+- Framework coverage for Svelte, Solid, Astro, Next.js App Router, and React Server Components.
+- Expanded static analysis for alias imports, destructured `t`, nested calls, and tagged templates.
+- Incremental extraction cache with file hashing and cached file lists for faster scans.
+- Parallel locale translations with configurable concurrency limits (`batch.localeConcurrency`).
+- New examples for Svelte, Solid, Astro, and a Next.js server component route.
+
+### Changed
+- Docs reorganized into a structured enterprise guide with new pages for Quick Start and Extraction.
+
 ## [0.1.3] - 2026-02-10
 ### Changed
 - Application version for NPM normalization

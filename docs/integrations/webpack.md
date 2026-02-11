@@ -1,6 +1,6 @@
 # Webpack
 
-Interceptor integrates with Webpack via a plugin that runs the compiler before a build and in watch mode when Webpack watches.
+Use the Webpack plugin to run Interceptor before builds and on watch.
 
 ## Install
 ```bash
@@ -12,14 +12,10 @@ pnpm add -D @wrkspace-co/interceptor
 const { InterceptorWebpackPlugin } = require("@wrkspace-co/interceptor/webpack");
 
 module.exports = {
-  plugins: [
-    new InterceptorWebpackPlugin({
-      configPath: "interceptor.config.ts"
-    })
-  ]
+  plugins: [new InterceptorWebpackPlugin({ configPath: "interceptor.config.ts" })]
 };
 ```
 
 ## Notes
-- The plugin will load `.env` from your project root.
-- Set `watch: false` if you want to disable watch mode with Webpack watch.
+- When Webpack runs in watch mode, Interceptor runs in watch mode too.
+- The plugin loads `.env` from your project root.
