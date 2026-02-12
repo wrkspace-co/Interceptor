@@ -1,8 +1,13 @@
 # Interceptor
 
-Interceptor is an on-demand translation compiler that scans your code for translation calls, translates missing strings via an LLM, and writes them into your i18n message files.
+Interceptor is an on-demand translation compiler that scans your code for translation calls, translates missing strings via an LLM, and writes them into your i18n message files. It keeps translation management aligned with how teams actually ship software: by extracting from source, preserving manual edits, and generating only what’s missing.
 
 **Docs:** [https://wrkspace-co.github.io/Interceptor/](https://wrkspace-co.github.io/Interceptor/)
+
+## Benefits
+- **Eliminate manual file edits.** As you code, Interceptor finds `t("...")` calls and fills in missing translations for each locale. You only review and refine the output, not copy‑paste strings across files.
+- **Add languages without rework.** Have 300+ existing strings? Just add a new locale in the config. Interceptor will generate the new language from your source code and existing base locale.
+- **Keep locale files clean.** Enable unused‑key cleanup to remove stale translations and avoid bloated message catalogs.
 
 ## Features
 - Auto scan and translate missing keys with LLMs
