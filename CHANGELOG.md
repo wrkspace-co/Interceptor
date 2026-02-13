@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `llm.fallbacks[].model` is optional and defaults to the primary model.
 - Translation cache across runs, retry/backoff handling, and fallback provider order.
 - Budget guardrails for max tokens per run and per locale.
+- Refactored compiler, extractor, config, and utils internals for maintainability.
 
 ## [0.1.4] - 2026-02-11
 ### Added

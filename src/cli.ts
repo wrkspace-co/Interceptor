@@ -16,6 +16,7 @@ interface RunOptions {
   diffPreview?: boolean;
 }
 
+// Run a single compile cycle with optional reporting.
 async function runCompile(options: RunOptions = {}) {
   const cwd = options.cwd ? path.resolve(options.cwd) : process.cwd();
   dotenv.config({ path: path.join(cwd, ".env") });
@@ -45,6 +46,7 @@ async function runCompile(options: RunOptions = {}) {
   }
 }
 
+// Start watch mode and re-run compiles on file changes.
 async function runWatch(options: { config?: string; cwd?: string } = {}) {
   const cwd = options.cwd ? path.resolve(options.cwd) : process.cwd();
   dotenv.config({ path: path.join(cwd, ".env") });
@@ -113,6 +115,7 @@ cli
 cli.help();
 cli.parse();
 
+// Render a human-friendly report to stdout.
 function printReport(report: CompileReport, options: { cwd: string }) {
   const color = createColor();
   const { summary } = report;
@@ -162,6 +165,7 @@ function printReport(report: CompileReport, options: { cwd: string }) {
   }
 }
 
+// Build ANSI color helpers with NO_COLOR support.
 function createColor() {
   const enabled = process.stdout.isTTY && process.env.NO_COLOR !== "1";
   const wrap = (code: number) => (value: string) =>
@@ -176,6 +180,7 @@ function createColor() {
   };
 }
 
+// Apply color to diff preview lines.
 function colorizeDiffLine(
   line: string,
   color: ReturnType<typeof createColor>
