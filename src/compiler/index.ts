@@ -4,6 +4,7 @@ import { extractMessagesIncremental } from "./extraction"
 import { scanFiles } from "../file-scanner"
 import { resolveProviderChain } from "../llm"
 import { loadTranslationCache, saveTranslationCache } from "../translation-cache"
+import { loadTranslationMeta, saveTranslationMeta } from "../translation-meta"
 import { readJsonFile, runWithConcurrency } from "../utils"
 import type { CompileMode, CompileResult, InterceptorConfig, Logger } from "../types"
 import { buildReport } from "./report"
@@ -79,6 +80,7 @@ export async function compileOnce(
   )
   const sourceByKey = buildSourceMap(uniqueMessages, sourceMessages)
   const translationCache = await loadTranslationCache(normalized)
+  const translationMeta = await loadTranslationMeta(normalized)
   const providerChain = resolveProviderChain(normalized.llm)
 
   const localePlans = await buildLocalePlans({
@@ -86,7 +88,8 @@ export async function compileOnce(
     uniqueMessages,
     sourceByKey,
     translationCache,
-    providerChain
+    providerChain,
+    translationMeta
   })
 
   applyBudgetsToPlans(localePlans, sourceLocale, normalized.budget)
@@ -111,6 +114,8 @@ export async function compileOnce(
   const updatedLocales: string[] = []
   const skippedLocales: string[] = []
   let cacheDirty = false
+  let metaDirty = false
+  const now = Date.now()
   for (const result of localeResults) {
     if (result.updated) {
       updatedLocales.push(result.locale)
@@ -122,10 +127,33 @@ export async function compileOnce(
       cacheDirty = true
       Object.assign(translationCache.items, updates)
     }
+
+    if (isWrite) {
+      const localeMeta = translationMeta.items[result.locale] ?? {}
+      if (Object.keys(result.addedEntries).length > 0) {
+        metaDirty = true
+        for (const [key, value] of Object.entries(result.addedEntries)) {
+          localeMeta[key] = { value, createdAt: now }
+        }
+      }
+      if (result.diff.removedKeys.length > 0) {
+        metaDirty = true
+        for (const key of result.diff.removedKeys) {
+          delete localeMeta[key]
+        }
+      }
+      if (metaDirty) {
+        translationMeta.items[result.locale] = localeMeta
+      }
+    }
   }
 
   if (cacheDirty && isWrite) {
     await saveTranslationCache(normalized, translationCache)
+  }
+
+  if (metaDirty && isWrite) {
+    await saveTranslationMeta(normalized, translationMeta)
   }
 
   const report = buildReport({

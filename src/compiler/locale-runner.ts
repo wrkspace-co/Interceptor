@@ -23,6 +23,7 @@ export async function runLocalePlan(params: {
       locale: plan.locale,
       updated: false,
       cacheUpdates: {},
+      addedEntries: {},
       diff: {
         locale: plan.locale,
         file: plan.messagesFile,
@@ -111,6 +112,9 @@ export async function runLocalePlan(params: {
     for (const key of plan.unusedKeys) {
       delete updated[key]
     }
+    for (const key of plan.transientKeys) {
+      delete updated[key]
+    }
   }
 
   const diff = buildLocaleDiff({
@@ -126,10 +130,16 @@ export async function runLocalePlan(params: {
     await writeJsonFile(plan.messagesFile, updated)
   }
 
+  const addedEntries: Record<string, string> = {}
+  for (const key of diff.addedKeys) {
+    addedEntries[key] = updated[key]
+  }
+
   return {
     locale: plan.locale,
     updated: diff.changed,
     cacheUpdates,
-    diff
+    diff,
+    addedEntries
   }
 }

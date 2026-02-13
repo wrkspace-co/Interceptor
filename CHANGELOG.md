@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Per-provider fallback configuration for models and API key envs.
 - `interceptor check` for diff-only CI validation with JSON reports.
 - Dry-run mode with per-file diff previews and colored CLI output.
+- Smart transient key pruning to avoid partial-save translations.
 ### Changed
 - `defaultLocale` and `llm.provider` are now required config fields.
 - `llm.fallbacks[].model` is optional and defaults to the primary model.

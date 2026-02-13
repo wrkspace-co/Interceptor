@@ -154,6 +154,7 @@ Optional:
 | Field | Purpose | Required | Default |
 | --- | --- | --- | --- |
 | `cleanup.removeUnused` | Remove keys not in source. | No | `false` |
+| `cleanup.transientKeyWindowMs` | Prune recent auto-generated keys replaced by longer strings. | No | `300000` |
 
 ### Budget
 | Field | Purpose | Required | Default |
@@ -241,3 +242,7 @@ cleanup: {
   removeUnused: true
 }
 ```
+
+## Transient key pruning
+When you save midway through typing, Interceptor can generate short, incomplete keys.
+`cleanup.transientKeyWindowMs` removes recently auto-generated keys that are no longer in source when a longer replacement key appears.

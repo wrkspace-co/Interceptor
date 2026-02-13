@@ -9,6 +9,7 @@ export interface LocalePlan {
   cachedTranslations: Map<number, string>
   toTranslate: Array<{ index: number; source: string }>
   unusedKeys: string[]
+  transientKeys: string[]
   shouldPrune: boolean
   budgetTokens: number
 }
@@ -18,4 +19,5 @@ export interface LocaleRunResult {
   updated: boolean
   cacheUpdates: Record<string, string>
   diff: LocaleDiffReport
+  addedEntries: Record<string, string>
 }

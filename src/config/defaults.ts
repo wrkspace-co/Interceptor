@@ -73,7 +73,8 @@ export const DEFAULT_WATCHER: Required<WatcherConfig> = {
 
 // Default cleanup behavior.
 export const DEFAULT_CLEANUP = {
-  removeUnused: false
+  removeUnused: false,
+  transientKeyWindowMs: 5 * 60 * 1000
 }
 
 // Default token budget settings.

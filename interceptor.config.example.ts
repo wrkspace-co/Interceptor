@@ -61,7 +61,8 @@ const config: InterceptorConfig = {
     maxTokensPerLocale: 2000
   },
   cleanup: {
-    removeUnused: false
+    removeUnused: false,
+    transientKeyWindowMs: 5 * 60 * 1000
   }
 };
 

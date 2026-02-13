@@ -112,6 +112,7 @@ export interface WatcherConfig {
 
 export interface CleanupConfig {
   removeUnused?: boolean;
+  transientKeyWindowMs?: number;
 }
 
 export interface InterceptorConfig {

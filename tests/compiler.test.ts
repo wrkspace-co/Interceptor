@@ -473,4 +473,73 @@ describe("compileOnce", () => {
     expect(await fileExists(getTranslationCachePath(rootDir))).toBe(false);
     expect(await fileExists(getExtractionCachePath(rootDir))).toBe(false);
   });
+
+  it("prunes transient partial keys after a longer replacement appears", async () => {
+    const rootDir = await createTempProject();
+    const sourceFile = path.join(rootDir, "src", "App.tsx");
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url: string, options?: any) => {
+        const body = JSON.parse(options.body);
+        const userContent = body.messages.find((msg: any) => msg.role === "user")
+          .content;
+        const payload = JSON.parse(userContent);
+
+        return {
+          ok: true,
+          status: 200,
+          statusText: "OK",
+          json: async () => ({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify(payload.strings.map((str: string) => `PT_${str}`))
+                }
+              }
+            ]
+          }),
+          text: async () => ""
+        } as any;
+      })
+    );
+
+    const config: InterceptorConfig = {
+      rootDir,
+      include: ["src/**/*.{ts,tsx}"],
+      locales: ["en", "pt"],
+      defaultLocale: "en",
+      llm: {
+        provider: "openai",
+        model: "gpt-4o-mini",
+        apiKeyEnv: envKey
+      },
+      i18n: {
+        messagesPath: "locales/{locale}.json"
+      },
+      cleanup: {
+        removeUnused: false,
+        transientKeyWindowMs: 60_000
+      }
+    };
+
+    await fs.writeFile(sourceFile, "t('Translate all these');\n", "utf8");
+    await compileOnce(config, { cwd: rootDir, logger });
+
+    await fs.writeFile(
+      sourceFile,
+      "t('Translate all these strings without manual setup.');\n",
+      "utf8"
+    );
+    await compileOnce(config, { cwd: rootDir, logger });
+
+    const ptMessages = JSON.parse(
+      await fs.readFile(path.join(rootDir, "locales", "pt.json"), "utf8")
+    );
+
+    expect(ptMessages["Translate all these"]).toBeUndefined();
+    expect(ptMessages).toMatchObject({
+      "Translate all these strings without manual setup.": "PT_Translate all these strings without manual setup."
+    });
+  });
 });
