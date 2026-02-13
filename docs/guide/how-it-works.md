@@ -9,7 +9,7 @@ The extractor parses supported files and collects translation calls based on you
 Existing locale files are loaded and compared with extracted keys. Keys already present are never overwritten.
 
 ## 3. Translate
-Only missing keys are sent to the configured LLM provider. Strings are batched to control costs and rate limits. If the default locale already has a value for a key, that value is used as the translation source.
+Only missing keys are sent to the configured LLM provider. Strings are batched to control costs and rate limits, with optional retries and a fallback provider chain. Translations are cached across runs to avoid re-requesting the same strings. If the default locale already has a value for a key, that value is used as the translation source.
 
 ## 4. Write
 Locale files are updated with new keys. The default locale is populated with the source string. Other locales receive the translated value.

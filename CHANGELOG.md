@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2026-02-13
+### Added
+- Per-provider fallback configuration for models and API key envs.
+- `interceptor check` for diff-only CI validation with JSON reports.
+- Dry-run mode with per-file diff previews and colored CLI output.
+- Smart transient key pruning to avoid partial-save translations.
+### Changed
+- `defaultLocale` and `llm.provider` are now required config fields.
+- `llm.fallbacks[].model` is optional and defaults to the primary model.
+- Translation cache across runs, retry/backoff handling, and fallback provider order.
+- Budget guardrails for max tokens per run and per locale.
+- Refactored compiler, extractor, config, and utils internals for maintainability.
+
 ## [0.1.4] - 2026-02-11
 ### Added
 - Vue SFC `<template>` and `<i18n>` block extraction.

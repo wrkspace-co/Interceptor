@@ -15,7 +15,8 @@ async function createTempFile(filename: string, content: string): Promise<string
 function createConfig(rootDir: string) {
   return normalizeConfig({
     locales: ["en"],
-    llm: { model: "gpt-4o-mini" },
+    defaultLocale: "en",
+    llm: { provider: "openai", model: "gpt-4o-mini" },
     rootDir
   });
 }

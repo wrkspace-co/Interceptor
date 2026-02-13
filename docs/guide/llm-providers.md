@@ -89,3 +89,29 @@ llm: {
 
 ## Custom env var name
 If your key is stored under another environment variable, set `llm.apiKeyEnv` to that name.
+
+## Reliability settings
+You can define fallback providers with per-provider models and API key env names:
+```ts
+llm: {
+  provider: "openai",
+  model: "gpt-4o-mini",
+  fallbacks: [
+    {
+      provider: "anthropic",
+      model: "claude-3-5-sonnet-20240620",
+      apiKeyEnv: "ANTHROPIC_API_KEY"
+    },
+    {
+      provider: "google",
+      model: "gemini-1.5-pro",
+      apiKeyEnv: "GEMINI_API_KEY"
+    }
+  ],
+  retries: 2,
+  retryDelayMs: 500,
+  retryMaxDelayMs: 4000
+}
+```
+
+Fallback entries can omit `apiKeyEnv` to use the provider default env variable and omit `model` to reuse the primary model.

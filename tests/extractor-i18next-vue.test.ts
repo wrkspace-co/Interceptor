@@ -23,7 +23,8 @@ describe("i18next extraction", () => {
     const filePath = await createTempFile("App.tsx", code);
     const normalized = normalizeConfig({
       locales: ["en"],
-      llm: { model: "gpt-4o-mini" },
+      defaultLocale: "en",
+      llm: { provider: "openai", model: "gpt-4o-mini" },
       rootDir: path.dirname(filePath)
     });
 
@@ -45,7 +46,8 @@ describe("i18next extraction", () => {
     const filePath = await createTempFile("Trans.tsx", code);
     const normalized = normalizeConfig({
       locales: ["en"],
-      llm: { model: "gpt-4o-mini" },
+      defaultLocale: "en",
+      llm: { provider: "openai", model: "gpt-4o-mini" },
       rootDir: path.dirname(filePath)
     });
 
@@ -89,7 +91,8 @@ describe("vue-i18n extraction", () => {
     const filePath = await createTempFile("Component.vue", code);
     const normalized = normalizeConfig({
       locales: ["en"],
-      llm: { model: "gpt-4o-mini" },
+      defaultLocale: "en",
+      llm: { provider: "openai", model: "gpt-4o-mini" },
       rootDir: path.dirname(filePath)
     });
 

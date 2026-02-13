@@ -36,6 +36,7 @@ export default config;
 ```
 
 Save as `interceptor.config.ts` in your project root.
+Only `locales`, `defaultLocale`, `llm.provider`, and `llm.model` are required. Everything else is optional with defaults.
 
 ## 4. Run
 ```bash
