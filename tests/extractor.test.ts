@@ -41,7 +41,8 @@ describe("extractMessagesFromFile", () => {
     const filePath = await createTempFile(code);
     const normalized = normalizeConfig({
       locales: ["en"],
-      llm: { model: "gpt-4o-mini" },
+      defaultLocale: "en",
+      llm: { provider: "openai", model: "gpt-4o-mini" },
       rootDir: path.dirname(filePath)
     });
 

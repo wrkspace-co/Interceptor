@@ -74,6 +74,11 @@ const DEFAULT_CLEANUP = {
   removeUnused: false
 };
 
+const DEFAULT_BUDGET = {
+  maxTokensPerRun: Number.POSITIVE_INFINITY,
+  maxTokensPerLocale: Number.POSITIVE_INFINITY
+};
+
 export async function loadConfig(
   explicitPath?: string,
   cwd: string = process.cwd()
@@ -107,12 +112,18 @@ export function normalizeConfig(
   if (!config || !Array.isArray(config.locales) || config.locales.length === 0) {
     throw new Error("config.locales is required and must be a non-empty array.");
   }
+  if (!config.defaultLocale) {
+    throw new Error("config.defaultLocale is required.");
+  }
   if (!config.llm?.model) {
     throw new Error("config.llm.model is required.");
   }
+  if (!config.llm?.provider) {
+    throw new Error("config.llm.provider is required.");
+  }
 
   const rootDir = path.resolve(cwd, config.rootDir ?? ".");
-  const defaultLocale = config.defaultLocale ?? config.locales[0];
+  const defaultLocale = config.defaultLocale;
 
   const extractor: NormalizedExtractorConfig = {
     functions: config.extractor?.functions ?? DEFAULT_EXTRACTOR.functions,
@@ -162,7 +173,7 @@ export function normalizeConfig(
     ...(config.i18n ?? {})
   };
 
-  const llmProvider = config.llm.provider ?? "openai";
+  const llmProvider = config.llm.provider;
   const defaultApiKeyEnv: Record<string, string> = {
     openai: "OPENAI_API_KEY",
     "openai-compatible": "OPENAI_COMPAT_API_KEY",
@@ -173,12 +184,31 @@ export function normalizeConfig(
     groq: "GROQ_API_KEY",
     deepseek: "DEEPSEEK_API_KEY"
   };
+  const fallbackConfigs = config.llm.fallbacks ?? [];
+  let normalizedFallbacks = fallbackConfigs.map((fallback) => {
+    if (!fallback?.provider) {
+      throw new Error("config.llm.fallbacks must include a provider.");
+    }
+    const model = fallback.model ?? config.llm.model;
+    return {
+      provider: fallback.provider,
+      model,
+      apiKeyEnv: fallback.apiKeyEnv ?? defaultApiKeyEnv[fallback.provider],
+      baseUrl: fallback.baseUrl,
+      temperature: fallback.temperature
+    };
+  });
+
   const llm = {
     provider: llmProvider,
     model: config.llm.model,
     apiKeyEnv: config.llm.apiKeyEnv ?? defaultApiKeyEnv[llmProvider],
     baseUrl: config.llm.baseUrl,
-    temperature: config.llm.temperature
+    temperature: config.llm.temperature,
+    fallbacks: normalizedFallbacks,
+    retries: config.llm.retries ?? 2,
+    retryDelayMs: config.llm.retryDelayMs ?? 500,
+    retryMaxDelayMs: config.llm.retryMaxDelayMs ?? 4000
   };
 
   const batch = {
@@ -196,6 +226,11 @@ export function normalizeConfig(
     ...(config.cleanup ?? {})
   };
 
+  const budget = {
+    ...DEFAULT_BUDGET,
+    ...(config.budget ?? {})
+  };
+
   return {
     rootDir,
     include: config.include ?? DEFAULT_INCLUDE,
@@ -207,7 +242,8 @@ export function normalizeConfig(
     llm,
     batch,
     watcher,
-    cleanup
+    cleanup,
+    budget
   };
 }
 

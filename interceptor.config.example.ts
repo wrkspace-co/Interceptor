@@ -6,7 +6,22 @@ const config: InterceptorConfig = {
   llm: {
     provider: "openai", // openai | openai-compatible | google | anthropic | mistral | cohere | groq | deepseek
     model: "gpt-4o-mini",
-    apiKeyEnv: "OPENAI_API_KEY"
+    apiKeyEnv: "OPENAI_API_KEY",
+    fallbacks: [
+      {
+        provider: "anthropic",
+        model: "claude-3-5-sonnet-20240620",
+        apiKeyEnv: "ANTHROPIC_API_KEY"
+      },
+      {
+        provider: "google",
+        model: "gemini-1.5-pro",
+        apiKeyEnv: "GEMINI_API_KEY"
+      }
+    ],
+    retries: 2,
+    retryDelayMs: 500,
+    retryMaxDelayMs: 4000
   },
   i18n: {
     messagesPath: "src/locales/{locale}.json"
@@ -40,6 +55,10 @@ const config: InterceptorConfig = {
     size: 20,
     delayMs: 0,
     localeConcurrency: 2
+  },
+  budget: {
+    maxTokensPerRun: 6000,
+    maxTokensPerLocale: 2000
   },
   cleanup: {
     removeUnused: false

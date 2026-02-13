@@ -76,8 +76,20 @@ export interface I18nConfig {
 }
 
 export interface LlmConfig {
-  provider?: LlmProvider;
+  provider: LlmProvider;
   model: string;
+  apiKeyEnv?: string;
+  baseUrl?: string;
+  temperature?: number;
+  fallbacks?: LlmFallbackConfig[];
+  retries?: number;
+  retryDelayMs?: number;
+  retryMaxDelayMs?: number;
+}
+
+export interface LlmFallbackConfig {
+  provider: LlmProvider;
+  model?: string;
   apiKeyEnv?: string;
   baseUrl?: string;
   temperature?: number;
@@ -87,6 +99,11 @@ export interface BatchConfig {
   size?: number;
   delayMs?: number;
   localeConcurrency?: number;
+}
+
+export interface BudgetConfig {
+  maxTokensPerRun?: number;
+  maxTokensPerLocale?: number;
 }
 
 export interface WatcherConfig {
@@ -102,13 +119,14 @@ export interface InterceptorConfig {
   include?: string[];
   exclude?: string[];
   locales: string[];
-  defaultLocale?: string;
+  defaultLocale: string;
   extractor?: ExtractorConfig;
   i18n?: I18nConfig;
   llm: LlmConfig;
   batch?: BatchConfig;
   watcher?: WatcherConfig;
   cleanup?: CleanupConfig;
+  budget?: BudgetConfig;
 }
 
 export type ExtractedMessageOrigin =
@@ -137,19 +155,58 @@ export interface NormalizedConfig {
   i18n: Required<Omit<I18nConfig, "resolveMessagesFile">> & {
     resolveMessagesFile?: (locale: string) => string;
   };
-  llm: Required<Omit<LlmConfig, "baseUrl" | "temperature">> & {
+  llm: {
+    provider: LlmProvider;
+    model: string;
+    apiKeyEnv: string;
     baseUrl?: string;
     temperature?: number;
+    fallbacks: Array<Required<Omit<LlmFallbackConfig, "baseUrl" | "temperature">> & {
+      baseUrl?: string;
+      temperature?: number;
+    }>;
+    retries: number;
+    retryDelayMs: number;
+    retryMaxDelayMs: number;
   };
   batch: Required<BatchConfig>;
   watcher: Required<WatcherConfig>;
   cleanup: Required<CleanupConfig>;
+  budget: Required<BudgetConfig>;
+}
+
+export type CompileMode = "write" | "dry-run" | "check";
+
+export interface LocaleDiffReport {
+  locale: string;
+  file: string;
+  addedKeys: string[];
+  removedKeys: string[];
+  addedCount: number;
+  removedCount: number;
+  changed: boolean;
+  preview?: string;
+}
+
+export interface CompileReport {
+  mode: CompileMode;
+  extractedCount: number;
+  updatedLocales: string[];
+  skippedLocales: string[];
+  locales: LocaleDiffReport[];
+  summary: {
+    filesChanged: number;
+    keysAdded: number;
+    keysRemoved: number;
+  };
+  generatedAt: string;
 }
 
 export interface CompileResult {
   extractedCount: number;
   updatedLocales: string[];
   skippedLocales: string[];
+  report?: CompileReport;
 }
 
 export interface Logger {
