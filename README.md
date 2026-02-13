@@ -1,4 +1,15 @@
-# Interceptor
+<div align="center">
+  <h1>Interceptor</h1>
+  <p>
+    <img alt="Release" src="https://img.shields.io/github/v/release/wrkspace-co/Interceptor" />
+    <img alt="CI" src="https://img.shields.io/github/actions/workflow/status/wrkspace-co/interceptor/ci.yml" />
+    <a href="https://badge.socket.dev/npm/package/@wrkspace-co/interceptor">
+      <img alt="Socket" src="https://badge.socket.dev/npm/package/@wrkspace-co/interceptor" />
+    </a>
+    <img alt="License" src="https://img.shields.io/github/license/wrkspace-co/interceptor" />
+    <img alt="Stars" src="https://img.shields.io/github/stars/wrkspace-co/Interceptor" />
+  </p>
+</div>
 
 Interceptor is an on-demand translation compiler that scans your code for translation calls, translates missing strings via an LLM, and writes them into your i18n message files. It keeps translation management aligned with how teams actually ship software: by extracting from source, preserving manual edits, and generating only what’s missing.
 
